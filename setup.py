@@ -3,13 +3,13 @@ from setuptools import setup, find_packages
 setup(
     name="st-repeating-field-group",
     version="0.1.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Joey Hersh",
+    author_email="joeyandpaige@gmail.com",
     description="A Streamlit plugin for creating repeating field groups",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/st-repeating-field-group",
-    packages=find_packages(),
+    url="https://github.com/joey12725/st-repeating-field-group",
+    packages=["st_repeating_field_group"],
     include_package_data=True,
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -25,4 +25,4 @@ setup(
         "streamlit>=0.80.0",
     ],
     python_requires=">=3.7",
-)
+) 

@@ -58,17 +58,17 @@ def generate_repeating_field_group(keys, group_id, default_values=None):
 
             try:
                 # Generate the appropriate Streamlit input widget based on the field type
-                if field_type == int:
+                if field_type in [int, "int"]:
                     int_value = int(default_value) if default_value is not None else 0
                     field_group[key] = row_columns[0].number_input(key, value=int_value, step=1, 
                                                                    key=f"{key}_{row_id}_{group_id}",
                                                                    on_change=update_field, args=(key,))
-                elif field_type == float:
+                elif field_type in [float, "float"]:
                     float_value = float(default_value) if default_value is not None else 0.0
                     field_group[key] = row_columns[0].number_input(key, value=float_value, format="%.2f", 
                                                                    key=f"{key}_{row_id}_{group_id}",
                                                                    on_change=update_field, args=(key,))
-                elif field_type == str:
+                elif field_type in [str, "str"]:
                     field_group[key] = row_columns[0].text_input(key, value=str(default_value) if default_value is not None else "", 
                                                                  key=f"{key}_{row_id}_{group_id}",
                                                                  on_change=update_field, args=(key,))
@@ -98,18 +98,32 @@ def generate_repeating_field_group(keys, group_id, default_values=None):
                                                                on_change=update_field, args=(key,))
                 elif field_type == "slider":
                     min_value = float(value.get("min", 0))
-                    max_value = float(float(value.get("max", 100)))
+                    max_value = float(value.get("max", 100))
                     step = value.get("step", 1)
                     field_group[key] = row_columns[0].slider(key, min_value=min_value, max_value=max_value, 
                                                              value=float(default_value), step=step,
                                                              key=f"{key}_{row_id}_{group_id}",
                                                              on_change=update_field, args=(key,))
+                elif field_type == "range_slider":
+                    min_value = float(value.get("min", 0))
+                    max_value = float(value.get("max", 100))
+                    step = value.get("step", 1)
+                    if isinstance(default_value, (list, tuple)) and len(default_value) == 2:
+                        default_range = (float(default_value[0]), float(default_value[1]))
+                    else:
+                        default_range = (min_value, max_value)
+                    field_group[key] = row_columns[0].slider(key, min_value=min_value, max_value=max_value,
+                                                             value=default_range, step=step,
+                                                             key=f"{key}_{row_id}_{group_id}",
+                                                             on_change=update_field, args=(key,))
                 else:
-                    raise ValueError(f"Invalid field type for {key}: {field_type}")
+                    raise ValueError(f"Invalid field type '{field_type}' for field '{key}'")
             except ValueError as e:
-                st.error(f"Error in field '{key}': {str(e)}")
+                st.error(f"Error in field '{key}': {str(e)}. Please check the field configuration and ensure the default value matches the specified type.")
+            except TypeError as e:
+                st.error(f"Type error in field '{key}': {str(e)}. Make sure the default value is compatible with the field type.")
             except Exception as e:
-                st.error(f"Unexpected error in field '{key}': {str(e)}")
+                st.error(f"Unexpected error in field '{key}': {str(e)}. Please review the field configuration and data.")
 
         # Add a delete button for each row
         row_columns[1].button("🗑️", key=f"del_{row_id}_{group_id}", on_click=remove_row, args=[row_id])

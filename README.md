@@ -14,7 +14,7 @@ pip install st-repeating-field-group
 
 - Create repeating groups of form fields
 - Dynamically add and remove field groups
-- Support for various field types: text, number, date, checkbox, toggle, slider, and dropdown
+- Support for various field types: text, number, date, checkbox, toggle, slider, range slider, and dropdown
 - Conditional field display based on other field values
 - Customizable default values
 
@@ -45,9 +45,9 @@ rows = generate_repeating_field_group(keys, group_id, default_values)
 st.write(rows)
 ```
 
-### Advanced Usage with Conditional Fields
+### Advanced Usage with Conditional Fields and Range Slider
 
-You can use the `only_show_if` parameter to conditionally display fields based on the values of other fields in the same group. Here's an example:
+You can use the `only_show_if` parameter to conditionally display fields based on the values of other fields in the same group. Here's an example that also includes a range slider:
 
 ```python
 import streamlit as st
@@ -72,12 +72,23 @@ keys = {
             "kwargs": {"is_student": "is_student"},
             "func": lambda is_student: not is_student
         }
+    },
+    "salary_range": {
+        "type": "range_slider",
+        "default": (30000, 80000),
+        "min": 0,
+        "max": 200000,
+        "step": 1000,
+        "only_show_if": {
+            "kwargs": {"is_student": "is_student"},
+            "func": lambda is_student: not is_student
+        }
     }
 }
 
 group_id = "advanced_example_group"
 default_values = [
-    {"name": "John Doe", "age": 30, "is_student": False, "job_title": "Engineer"},
+    {"name": "John Doe", "age": 30, "is_student": False, "job_title": "Engineer", "salary_range": (50000, 100000)},
     {"name": "Jane Smith", "age": 25, "is_student": True, "school_name": "University XYZ"}
 ]
 
@@ -86,20 +97,21 @@ rows = generate_repeating_field_group(keys, group_id, default_values)
 st.write(rows)
 ```
 
-In this example, the "school_name" field will only be displayed if "is_student" is checked, and the "job_title" field will only be displayed if "is_student" is not checked.
+In this example, the "school_name" field will only be displayed if "is_student" is checked, while the "job_title" and "salary_range" fields will only be displayed if "is_student" is not checked.
 
 ### Supported Field Types
 
 The `generate_repeating_field_group` function supports the following field types:
 
-- `str`: Text input
-- `int`: Integer input
-- `float`: Float input
+- `str` or `"str"`: Text input
+- `int` or `"int"`: Integer input
+- `float` or `"float"`: Float input
 - `"choice"`: Dropdown selection
 - `"date"`: Date input
 - `"toggle_switch"`: Toggle switch
 - `"checkbox"`: Checkbox
 - `"slider"`: Slider input
+- `"range_slider"`: Range slider input
 
 ### Parameters
 
